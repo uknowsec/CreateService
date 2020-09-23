@@ -1,4 +1,4 @@
-﻿//===============================================================================================//
+//===============================================================================================//
 // This is a stub for the actuall functionality of the DLL.
 //===============================================================================================//
 #include "ReflectiveLoader.h"
@@ -127,16 +127,16 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 			argv = CommandLineToArgvW(wszargs.data(), &argc);
 		}
 		BOOL bRet = FALSE;
-		char* szFileName = argv[1];
-		szName = argv[2];
+		char* szFileName = argv[0];
+		szName = argv[1];
 		printf("[*] CreateService by Uknow\n");
-		if (argc != 4)
+		if (argc != 3)
 		{
-			printf("   [+] usage: %s BinPath ServiceName start/stop\n", argv[0]);
-			printf("   [+] eg: %s \"c:\\evil.exe\" EvilService start/stop\n", argv[0]);
+			printf("   [+] usage: CreateService BinaryPathName ServiceName start/stop\n");
+			printf("   [+] eg: CreateService \"c:\\evil.exe\" EvilService start/stop\n");
 			return -1;
 		}
-		else if (strcmp(argv[3], "start") == 0) {
+		else if (strcmp(argv[2], "start") == 0) {
 			bRet = SystemServiceOperate(szFileName, 0);
 			if (FALSE == bRet)
 			{
@@ -154,7 +154,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 			printf("    [+] Success! Service successfully Create and Start.\n");
 			return 0;
 		}
-		else if (strcmp(argv[3], "stop") == 0)
+		else if (strcmp(argv[2], "stop") == 0)
 		{
 			bRet = SystemServiceOperate(szFileName, 2);
 			if (FALSE == bRet)
