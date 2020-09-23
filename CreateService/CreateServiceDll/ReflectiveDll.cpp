@@ -10,12 +10,6 @@
 #include <shellapi.h>
 #pragma comment(lib, "Shlwapi.lib")
 static  char* szName;
-using namespace std;
-std::string szargs;
-std::wstring wszargs;
-std::wstring wsHostFile;
-int argc = 0;
-LPSTR* argv = NULL;
 // Note: REFLECTIVEDLLINJECTION_VIA_LOADREMOTELIBRARYR and REFLECTIVEDLLINJECTION_CUSTOM_DLLMAIN are
 // defined in the project properties (Properties->C++->Preprocessor) so as we can specify our own 
 // DllMain and use the LoadRemoteLibraryR() API to inject this DLL.
@@ -96,15 +90,6 @@ BOOL SystemServiceOperate(char* lpszDriverPath, int iOperateType)
 	return TRUE;
 }
 
-std::wstring StringToWString(const std::string& str)
-{
-	int num = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-	wchar_t* wide = new wchar_t[num];
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wide, num);
-	std::wstring w_str(wide);
-	delete[] wide;
-	return w_str;
-}
 
 extern HINSTANCE hAppInstance;
 //===============================================================================================//
@@ -121,22 +106,30 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 	{
 		hAppInstance = hinstDLL;
 		/* print some output to the operator */
+		int c, i;
+		char* argv[100];
+		c = 0;
 		if (lpReserved != NULL) {
-			szargs = (PCHAR)lpReserved;
-			wszargs = StringToWString(szargs);
-			argv = CommandLineToArgvW(wszargs.data(), &argc);
+			argv[c] = strtok((char*)lpReserved, " ");
+			while (1) {
+				if (NULL == argv[c]) break;
+				c++;
+				if (c >= 100) break;
+				argv[c] = strtok(NULL, " ");
+
+			}
+		}
+		else
+		{
+			printf("   [+] Wrong number of parameters!\n");
+			printf("   [+] usage: CreateService BinaryPathName ServiceName start/stop\n");
+			printf("   [+] eg: CreateService c:\\evil.exe EvilService start/stop\n");
 		}
 		BOOL bRet = FALSE;
 		char* szFileName = argv[0];
 		szName = argv[1];
 		printf("[*] CreateService by Uknow\n");
-		if (argc != 3)
-		{
-			printf("   [+] usage: CreateService BinaryPathName ServiceName start/stop\n");
-			printf("   [+] eg: CreateService \"c:\\evil.exe\" EvilService start/stop\n");
-			return -1;
-		}
-		else if (strcmp(argv[2], "start") == 0) {
+		if (strcmp(argv[2], "start") == 0) {
 			bRet = SystemServiceOperate(szFileName, 0);
 			if (FALSE == bRet)
 			{
@@ -173,6 +166,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 			printf("    [+] Success! Service successfully Stop and Delete.\n");
 			return 0;
 		}
+		/* flush STDOUT */
+		fflush(stdout);
+
+		/* we're done, so let's exit */
+		ExitProcess(0);
+		break;
 		break;
 	}
 	case DLL_PROCESS_DETACH:
