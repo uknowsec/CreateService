@@ -5,26 +5,26 @@
 #pragma comment(lib, "Shlwapi.lib")
 static  char* szName;
 
-// 0 ¼ÓÔØ·şÎñ    1 Æô¶¯·şÎñ    2 Í£Ö¹·şÎñ    3 É¾³ı·şÎñ
+// 0 åŠ è½½æœåŠ¡    1 å¯åŠ¨æœåŠ¡    2 åœæ­¢æœåŠ¡    3 åˆ é™¤æœåŠ¡
 BOOL SystemServiceOperate(char* lpszDriverPath, int iOperateType)
 {
 	BOOL bRet = TRUE;
 	//char szName[MAX_PATH] = { 0 };
 
 	//lstrcpy(szName, lpszDriverPath);
-	// ¹ıÂËµôÎÄ¼şÄ¿Â¼£¬»ñÈ¡ÎÄ¼şÃû
+	// è¿‡æ»¤æ‰æ–‡ä»¶ç›®å½•ï¼Œè·å–æ–‡ä»¶å
 	//PathStripPath(szName);
 
 	SC_HANDLE shSCManager = NULL, shService = NULL;
 	SERVICE_STATUS sStatus;
 	DWORD dwErrorCode = 0;
 
-	// ´ò¿ª·şÎñ¿ØÖÆ¹ÜÀíÆ÷Êı¾İ¿â
+	// æ‰“å¼€æœåŠ¡æ§åˆ¶ç®¡ç†å™¨æ•°æ®åº“
 	shSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 
 	if (0 != iOperateType)
 	{
-		// ´ò¿ªÒ»¸öÒÑ¾­´æÔÚµÄ·şÎñ
+		// æ‰“å¼€ä¸€ä¸ªå·²ç»å­˜åœ¨çš„æœåŠ¡
 		shService = OpenService(shSCManager, szName, SERVICE_ALL_ACCESS);
 		if (!shService)
 		{
@@ -38,9 +38,9 @@ BOOL SystemServiceOperate(char* lpszDriverPath, int iOperateType)
 	{
 	case 0:
 	{
-		// ´´½¨·şÎñ
-		// SERVICE_AUTO_START   ËæÏµÍ³×Ô¶¯Æô¶¯
-		// SERVICE_DEMAND_START ÊÖ¶¯Æô¶¯
+		// åˆ›å»ºæœåŠ¡
+		// SERVICE_AUTO_START   éšç³»ç»Ÿè‡ªåŠ¨å¯åŠ¨
+		// SERVICE_DEMAND_START æ‰‹åŠ¨å¯åŠ¨
 		shService = CreateService(shSCManager, szName, szName,
 			SERVICE_ALL_ACCESS,
 			SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS,
@@ -51,26 +51,26 @@ BOOL SystemServiceOperate(char* lpszDriverPath, int iOperateType)
 	}
 	case 1:
 	{
-		// Æô¶¯·şÎñ
+		// å¯åŠ¨æœåŠ¡
 		StartService(shService, 0, NULL);
 		break;
 	}
 	case 2:
 	{
-		// Í£Ö¹·şÎñ
+		// åœæ­¢æœåŠ¡
 		ControlService(shService, SERVICE_CONTROL_STOP, &sStatus);
 		break;
 	}
 	case 3:
 	{
-		// É¾³ı·şÎñ
+		// åˆ é™¤æœåŠ¡
 		DeleteService(shService);
 		break;
 	}
 	default:
 		break;
 	}
-	// ¹Ø±Õ¾ä±ú
+	// å…³é—­å¥æŸ„
 
 	CloseServiceHandle(shService);
 	CloseServiceHandle(shSCManager);
@@ -86,7 +86,7 @@ int main(int argc, TCHAR* argv[])
 	printf("[*] CreateService by Uknow\n");
 	if (argc != 4)
 	{
-		printf("   [+] usage: %s BinPath ServiceName start/stop\n", argv[0]);
+		printf("   [+] usage: %s BinaryPathName ServiceName start/stop\n", argv[0]);
 		printf("   [+] eg: %s \"c:\\evil.exe\" EvilService start/stop\n", argv[0]);
 		return -1;
 	}
