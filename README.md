@@ -11,13 +11,7 @@ TCHAR szServiceName[MAX_PATH] = "ServiceTest.exe";
 SERVICE_STATUS_HANDLE g_ServiceStatusHandle = 0;
 
 void MyFunc() {
-	HANDLE hFile = NULL;
-	TCHAR szText[] = "If you see this, it means service is created successfully : D";
-	DWORD dwSize = 0;
-	hFile = CreateFile("C:\\Users\\Administrator\\Desktop\\ttt.txt", GENERIC_WRITE, 0,
-		NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	WriteFile(hFile, szText, _countof(szText), &dwSize, NULL);
-	CloseHandle(hFile);
+	ShellExecute(0, "open", "C:\\Users\\Administrator\\Desktop\\test.exe", NULL, NULL, SW_HIDE);
 }
 
 BOOL SetServiceStatus(DWORD dwServiceCode) {
