@@ -11,7 +11,7 @@ TCHAR szServiceName[MAX_PATH] = "ServiceTest.exe";
 SERVICE_STATUS_HANDLE g_ServiceStatusHandle = 0;
 
 void MyFunc() {
-	ShellExecute(0, "open", "C:\\Users\\Administrator\\Desktop\\test.exe", NULL, NULL, SW_HIDE);
+	ShellExecute(0, "open", "C:\\PerfLogs\\test.exe", NULL, NULL, SW_HIDE);
 }
 
 BOOL SetServiceStatus(DWORD dwServiceCode) {
