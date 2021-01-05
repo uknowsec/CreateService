@@ -2,6 +2,9 @@
 
 
 ### 服务模板代码
+
+编译服务模板代码，用它来启动恶意exe。
+
 ```
 #include <windows.h>
 #include <tchar.h>
