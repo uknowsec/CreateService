@@ -2,7 +2,7 @@ $dll = "reflective_dll.dll";
 beacon_command_register(
 	"CreateService", 
 	"CreateService beacon log", 
-	"Synopsis: CreateService [BinaryPathName] [ServiceName] [start/stop] \n");
+	"Synopsis: CreateService [TransitPathName] [EvilPathName] [ServiceName] [start/stop] \n");
 
 alias("CreateService", {
     $args = substr($0, 14);
