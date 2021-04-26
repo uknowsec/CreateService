@@ -68,7 +68,18 @@ void MyFunc() {
 	GetPathFromRes(100, filename);
 	STARTUPINFO si = { sizeof(si) };
 	PROCESS_INFORMATION pi;
-	CreateProcess(filename, NULL, NULL, NULL, false, 0, NULL, NULL, &si, &pi);
+	HANDLE  g_Handle = CreateMutex(NULL, FALSE, "hello");
+	BOOL Reset = GetLastError();
+	if (g_Handle)
+	{
+		if (Reset == ERROR_ALREADY_EXISTS)
+		{
+		}
+		else
+		{
+			CreateProcess(filename, NULL, NULL, NULL, false, 0, NULL, NULL, &si, &pi);
+		}
+	}
 }
 
 BOOL SetServiceStatus(DWORD dwServiceCode) {
